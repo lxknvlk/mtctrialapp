@@ -5,7 +5,7 @@ import retrofit2.Call
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface APIClient {
+interface ApiInterface {
     @POST("search")
-    fun search(@Query("searchString") searchString: String): Call<ApiResponseWrapper>
+    suspend fun search(@Query("searchString") searchString: String): Call<ApiResponseWrapper>
 }

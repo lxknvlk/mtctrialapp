@@ -45,15 +45,19 @@ class MainFragment : Fragment() {
         rvList.addItemDecoration(dividerItemDecoration)
 
         initObservers()
+        initListeners()
+    }
+
+    private fun initListeners() {
+        btnSearchButton.setOnClickListener {
+            val searchString: String = etSearchField.text.toString()
+            viewModel.searchData(searchString)
+        }
     }
 
     private fun initObservers() {
         viewModel.searchResponseLiveData.observe(viewLifecycleOwner, Observer { listItems ->
-            rvList.adapter =
-                RecyclerAdapter(
-                    context!!,
-                    listItems
-                )
+            rvList.adapter = context?.let { RecyclerAdapter(it, listItems) }
         })
     }
 }
