@@ -60,7 +60,7 @@ class MainFragment : Fragment() {
     private fun initListeners() {
         btnSearchButton.setOnClickListener {
             val searchString: String = etSearchField.text.toString()
-            viewModel.searchData(searchString)
+            if (searchString.isNotEmpty()) viewModel.searchData(searchString)
         }
     }
 
@@ -74,8 +74,10 @@ class MainFragment : Fragment() {
         if (rvList.adapter == null){
             rvList.adapter = context?.let { RecyclerAdapter(it, listItems.toMutableList()) }
         } else {
+
+
+
             (rvList.adapter as RecyclerAdapter).setData(listItems)
         }
     }
-
 }

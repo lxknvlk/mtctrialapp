@@ -29,7 +29,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         mediatorLiveData.addSource(dataRepository.playerLiveData) { playerEntityList ->
             val listElements = mutableListOf<ListElement>()
 
-            listElements.add(SeparatorListElement("Players"))
+            if (playerEntityList.isNotEmpty()) listElements.add(SeparatorListElement("Players"))
 
             playerEntityList?.forEach { player ->
                 listElements.add(
@@ -44,12 +44,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
 
-            mediatorLiveData.value = listElements
+            if (!listElements.isEmpty()) mediatorLiveData.value = listElements
         }
 
         mediatorLiveData.addSource(dataRepository.teamLiveData) { teamEntityList ->
             val listElements = mutableListOf<ListElement>()
-            listElements.add(SeparatorListElement("Teams"))
+            if (teamEntityList.isNotEmpty()) listElements.add(SeparatorListElement("Teams"))
 
             teamEntityList?.forEach { team ->
                 listElements.add(
@@ -64,7 +64,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
 
-            mediatorLiveData.value = listElements
+            if (!listElements.isEmpty()) mediatorLiveData.value = listElements
         }
 
         mediatorLiveData

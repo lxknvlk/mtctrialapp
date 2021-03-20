@@ -5,6 +5,7 @@ import com.example.mtctrial.data.api.model.SearchResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class ApiClient {
     companion object {
         var BaseUrl = "http://trials.mtcmobile.co.uk/api/football/1.0/"
@@ -19,7 +20,12 @@ class ApiClient {
     }
 
     suspend fun search(searchString: String): SearchResponse? {
-        val apiResponseWrapper: ApiResponseWrapper = apiInterface.search(searchString)
-        return apiResponseWrapper.result
+        val apiResponseWrapper: ApiResponseWrapper? = try {
+            apiInterface.search(searchString)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+        return apiResponseWrapper?.result
     }
 }
