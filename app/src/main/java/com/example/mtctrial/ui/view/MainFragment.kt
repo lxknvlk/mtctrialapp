@@ -1,15 +1,19 @@
-package com.example.mtctrial.ui.main
+package com.example.mtctrial.ui.view
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mtctrial.R
+import com.example.mtctrial.ui.adapter.RecyclerAdapter
+import com.example.mtctrial.ui.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.main_fragment.*
+
 
 class MainFragment : Fragment() {
 
@@ -33,12 +37,23 @@ class MainFragment : Fragment() {
         linearLayoutManager = LinearLayoutManager(activity)
         rvList.layoutManager = linearLayoutManager
 
+        val dividerItemDecoration = DividerItemDecoration(
+            rvList.context,
+            linearLayoutManager.orientation
+        )
+
+        rvList.addItemDecoration(dividerItemDecoration)
+
         initObservers()
     }
 
     private fun initObservers() {
         viewModel.searchResponseLiveData.observe(viewLifecycleOwner, Observer { listItems ->
-            rvList.adapter = RecyclerAdapter(context!!, listItems)
+            rvList.adapter =
+                RecyclerAdapter(
+                    context!!,
+                    listItems
+                )
         })
     }
 }

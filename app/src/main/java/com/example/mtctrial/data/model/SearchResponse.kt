@@ -1,5 +1,7 @@
-package com.example.mtctrial.ui.main
+package com.example.mtctrial.data.model
 
+import com.example.mtctrial.data.model.Player
+import com.example.mtctrial.data.model.Team
 import com.google.gson.annotations.SerializedName
 
 class SearchResponse {

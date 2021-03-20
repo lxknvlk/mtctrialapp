@@ -1,4 +1,4 @@
-package com.example.mtctrial.ui.main
+package com.example.mtctrial.data.model
 
 import com.google.gson.annotations.SerializedName
 

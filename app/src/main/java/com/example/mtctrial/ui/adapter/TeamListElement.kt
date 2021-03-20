@@ -1,4 +1,4 @@
-package com.example.mtctrial.ui.main
+package com.example.mtctrial.ui.adapter
 
 class TeamListElement(
     var teamID: String? = null,
