@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mtctrial.R
 
 class RecyclerAdapter(
     private val context: Context,
-    private var elementsList: List<ListElement>
+    private var elementsList: MutableList<ListElement>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -60,6 +61,13 @@ class RecyclerAdapter(
         }
     }
 
+    fun setData(newElements: List<ListElement>) {
+        val diffCallback = DataDiffCallback(elementsList, newElements)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        elementsList.clear()
+        elementsList.addAll(newElements)
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     inner class SeparatorViewHolder(view: View) : BaseViewHolder<ListElement>(view) {
         private val tvTitle: TextView = view.findViewById(R.id.tvTitle)

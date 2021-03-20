@@ -44,7 +44,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
 
-            mediatorLiveData.postValue(listElements)
+            mediatorLiveData.value = listElements
         }
 
         mediatorLiveData.addSource(dataRepository.teamLiveData) { teamEntityList ->
@@ -64,7 +64,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
 
-            mediatorLiveData.postValue(listElements)
+            mediatorLiveData.value = listElements
         }
 
         mediatorLiveData

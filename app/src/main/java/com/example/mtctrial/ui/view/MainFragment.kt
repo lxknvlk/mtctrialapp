@@ -7,9 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mtctrial.R
+import com.example.mtctrial.ui.adapter.DataDiffCallback
+import com.example.mtctrial.ui.adapter.ListElement
 import com.example.mtctrial.ui.adapter.RecyclerAdapter
 import com.example.mtctrial.ui.viewmodel.MainViewModel
 import com.example.mtctrial.ui.viewmodelfactory.MainViewModelFactory
@@ -63,7 +66,16 @@ class MainFragment : Fragment() {
 
     private fun initObservers() {
         viewModel.searchResponseLiveData.observe(viewLifecycleOwner, Observer { listItems ->
-            rvList.adapter = context?.let { RecyclerAdapter(it, listItems) }
+            updateList(listItems)
         })
     }
+
+    private fun updateList(listItems: List<ListElement>) {
+        if (rvList.adapter == null){
+            rvList.adapter = context?.let { RecyclerAdapter(it, listItems.toMutableList()) }
+        } else {
+            (rvList.adapter as RecyclerAdapter).setData(listItems)
+        }
+    }
+
 }
