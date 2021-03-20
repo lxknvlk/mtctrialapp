@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -23,16 +24,7 @@ class ApiClient {
     }
 
     suspend fun search(searchString: String): SearchResponse? {
-        return withContext(Dispatchers.IO) {
-            val call = apiInterface.search(searchString)
-            val response = call.execute()
-
-            if (response.code() == 200) {
-                val apiResponseWrapper: ApiResponseWrapper? = response.body()
-                apiResponseWrapper?.result
-            } else {
-                null
-            }
-        }
+        val apiResponseWrapper: ApiResponseWrapper = apiInterface.search(searchString)
+        return apiResponseWrapper.result
     }
 }

@@ -59,6 +59,8 @@ class MainViewModel : ViewModel() {
                     )
                 )
             }
+
+            searchResponseLiveData.postValue(listElements)
         }
     }
 }
