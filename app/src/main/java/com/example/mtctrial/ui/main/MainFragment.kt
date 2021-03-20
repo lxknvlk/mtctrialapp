@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mtctrial.R
 import kotlinx.android.synthetic.main.main_fragment.*
 
@@ -17,9 +18,11 @@ class MainFragment : Fragment() {
     }
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
+
         return inflater.inflate(R.layout.main_fragment, container, false)
     }
 
@@ -27,13 +30,15 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
+        linearLayoutManager = LinearLayoutManager(activity)
+        rvList.layoutManager = linearLayoutManager
+
         initObservers()
     }
 
     private fun initObservers() {
-        viewModel.weatherLiveData.observe(viewLifecycleOwner, Observer {
-            tvMessage.text = it
+        viewModel.searchResponseLiveData.observe(viewLifecycleOwner, Observer { listItems ->
+            rvList.adapter = RecyclerAdapter(context!!, listItems)
         })
     }
-
 }
