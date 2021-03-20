@@ -18,6 +18,8 @@ class DataDiffCallback(
             oldItem.playerID == newItem.playerID
         } else if (oldItem is TeamListElement && newItem is TeamListElement) {
             oldItem.teamID == newItem.teamID
+        } else if(oldItem is SeparatorListElement && newItem is SeparatorListElement){
+            oldItem.title == newItem.title
         } else {
             false
         }
@@ -38,6 +40,8 @@ class DataDiffCallback(
                     && oldItem.teamName == newItem.teamName
                     && oldItem.teamNationality == newItem.teamNationality
                     && oldItem.teamStadium == newItem.teamStadium
+        } else if(oldItem is SeparatorListElement && newItem is SeparatorListElement){
+            oldItem.title == newItem.title
         } else {
             false
         }

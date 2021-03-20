@@ -2,8 +2,8 @@ package com.example.mtctrial.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.example.mtctrial.data.api.ApiClient
 import com.example.mtctrial.data.api.model.PlayerEntity
@@ -12,63 +12,13 @@ import com.example.mtctrial.data.api.model.TeamEntity
 import com.example.mtctrial.data.database.AppDatabase
 import com.example.mtctrial.data.database.mapper.PlayerMapper
 import com.example.mtctrial.data.database.mapper.TeamMapper
-import com.example.mtctrial.data.database.model.PlayerData
 import com.example.mtctrial.data.database.repository.DataRepository
-import com.example.mtctrial.ui.adapter.ListElement
 import com.example.mtctrial.ui.adapter.PlayerListElement
-import com.example.mtctrial.ui.adapter.SeparatorListElement
 import com.example.mtctrial.ui.adapter.TeamListElement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-
-    val searchResponseLiveData: MutableLiveData<List<ListElement>> by lazy {
-        val mediatorLiveData = MediatorLiveData<List<ListElement>>()
-
-        mediatorLiveData.addSource(dataRepository.playerLiveData) { playerEntityList ->
-            val listElements = mutableListOf<ListElement>()
-
-            if (playerEntityList.isNotEmpty()) listElements.add(SeparatorListElement("Players"))
-
-            playerEntityList?.forEach { player ->
-                listElements.add(
-                    PlayerListElement(
-                        playerID = player.playerID,
-                        playerFirstName = player.playerFirstName,
-                        playerSecondName = player.playerSecondName,
-                        playerNationality = player.playerNationality,
-                        playerAge = player.playerAge,
-                        playerClub = player.playerClub
-                    )
-                )
-            }
-
-            if (!listElements.isEmpty()) mediatorLiveData.value = listElements
-        }
-
-        mediatorLiveData.addSource(dataRepository.teamLiveData) { teamEntityList ->
-            val listElements = mutableListOf<ListElement>()
-            if (teamEntityList.isNotEmpty()) listElements.add(SeparatorListElement("Teams"))
-
-            teamEntityList?.forEach { team ->
-                listElements.add(
-                    TeamListElement(
-                        teamID = team.teamID,
-                        teamName = team.teamName,
-                        teamStadium = team.teamStadium,
-                        isNation = team.isNation,
-                        teamNationality = team.teamNationality,
-                        teamCity = team.teamCity
-                    )
-                )
-            }
-
-            if (!listElements.isEmpty()) mediatorLiveData.value = listElements
-        }
-
-        mediatorLiveData
-    }
 
     private val apiClient: ApiClient by lazy {
         ApiClient()
@@ -92,6 +42,36 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             playerMapper,
             teamMapper
         )
+    }
+
+    val playerLiveData: LiveData<List<PlayerListElement>> by lazy {
+        Transformations.map(dataRepository.playerLiveData) { playerEntityList ->
+            playerEntityList.map { playerEntity ->
+                PlayerListElement(
+                    playerID = playerEntity.playerID,
+                    playerFirstName = playerEntity.playerFirstName,
+                    playerSecondName = playerEntity.playerSecondName,
+                    playerNationality = playerEntity.playerNationality,
+                    playerAge = playerEntity.playerAge,
+                    playerClub = playerEntity.playerClub
+                )
+            }
+        }
+    }
+
+    val teamLiveData: LiveData<List<TeamListElement>> by lazy {
+        Transformations.map(dataRepository.teamLiveData) { playerEntityList ->
+            playerEntityList.map { teamEntity ->
+                TeamListElement(
+                        teamID = teamEntity.teamID,
+                        teamName = teamEntity.teamName,
+                        teamStadium = teamEntity.teamStadium,
+                        isNation = teamEntity.isNation,
+                        teamNationality = teamEntity.teamNationality,
+                        teamCity = teamEntity.teamCity
+                    )
+            }
+        }
     }
 
     fun searchData(searchString: String) {

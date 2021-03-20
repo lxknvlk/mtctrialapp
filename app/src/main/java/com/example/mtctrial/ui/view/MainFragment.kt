@@ -7,19 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mtctrial.R
-import com.example.mtctrial.ui.adapter.DataDiffCallback
 import com.example.mtctrial.ui.adapter.ListElement
+import com.example.mtctrial.ui.adapter.PlayerListElement
 import com.example.mtctrial.ui.adapter.RecyclerAdapter
+import com.example.mtctrial.ui.adapter.TeamListElement
 import com.example.mtctrial.ui.viewmodel.MainViewModel
 import com.example.mtctrial.ui.viewmodelfactory.MainViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
 
 
 class MainFragment : Fragment() {
+
+    private val playerList: MutableList<PlayerListElement> = mutableListOf()
+    private val teamList: MutableList<TeamListElement> = mutableListOf()
 
     companion object {
         fun newInstance() = MainFragment()
@@ -65,19 +68,28 @@ class MainFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.searchResponseLiveData.observe(viewLifecycleOwner, Observer { listItems ->
-            updateList(listItems)
+        viewModel.playerLiveData.observe(viewLifecycleOwner, Observer { playerListElements ->
+            playerList.clear()
+            playerList.addAll(playerListElements)
+            updateList()
+        })
+
+        viewModel.teamLiveData.observe(viewLifecycleOwner, Observer { teamListElements ->
+            teamList.clear()
+            teamList.addAll(teamListElements)
+            updateList()
         })
     }
 
-    private fun updateList(listItems: List<ListElement>) {
+    private fun updateList() {
+        val newList = mutableListOf<ListElement>()
+        newList.addAll(playerList)
+        newList.addAll(teamList)
+
         if (rvList.adapter == null){
-            rvList.adapter = context?.let { RecyclerAdapter(it, listItems.toMutableList()) }
+            rvList.adapter = context?.let { RecyclerAdapter(it, newList.toMutableList()) }
         } else {
-
-
-
-            (rvList.adapter as RecyclerAdapter).setData(listItems)
+            (rvList.adapter as RecyclerAdapter).setData(newList)
         }
     }
 }
