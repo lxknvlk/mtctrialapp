@@ -1,12 +1,7 @@
 package com.example.mtctrial.data.api
 
-import com.example.mtctrial.data.model.ApiResponseWrapper
-import com.example.mtctrial.data.model.SearchResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Call
+import com.example.mtctrial.data.api.model.ApiResponseWrapper
+import com.example.mtctrial.data.api.model.SearchResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

@@ -1,15 +1,13 @@
-package com.example.mtctrial.data.model
+package com.example.mtctrial.data.api.model
 
-import com.example.mtctrial.data.model.Player
-import com.example.mtctrial.data.model.Team
 import com.google.gson.annotations.SerializedName
 
 class SearchResponse {
     @SerializedName("players")
-    var players: List<Player>? = null
+    var playerEntities: List<PlayerEntity>? = null
 
     @SerializedName("teams")
-    var teams: List<Team>? = null
+    var teamEntities: List<TeamEntity>? = null
 
     @SerializedName("status")
     var status: Boolean = true

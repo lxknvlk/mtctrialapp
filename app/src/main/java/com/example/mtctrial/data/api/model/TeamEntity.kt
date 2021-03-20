@@ -1,8 +1,8 @@
-package com.example.mtctrial.data.model
+package com.example.mtctrial.data.api.model
 
 import com.google.gson.annotations.SerializedName
 
-class Team {
+class TeamEntity {
     @SerializedName("teamID")
     var teamID: String? = null
 

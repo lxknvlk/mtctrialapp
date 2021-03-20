@@ -1,6 +1,5 @@
-package com.example.mtctrial.data.model
+package com.example.mtctrial.data.api.model
 
-import com.example.mtctrial.data.model.SearchResponse
 import com.google.gson.annotations.SerializedName
 
 class ApiResponseWrapper {
