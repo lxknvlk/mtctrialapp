@@ -12,12 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainViewModel : ViewModel() {
 
     companion object {
-        var BaseUrl = "http://api.openweathermap.org/"
-        var AppId = "2e65127e909e178d0af311a81f39948c"
-        var lat = "35"
-        var lon = "139"
-
-        var result: String? = ""
+        var BaseUrl = "http://trials.mtcmobile.co.uk/api/football/1.0/"
     }
 
     val weatherLiveData = MutableLiveData<String>()
@@ -28,36 +23,18 @@ class MainViewModel : ViewModel() {
                 .build()
 
         val service = retrofit.create(APIClient::class.java)
-        val call = service.getCurrentWeatherData(lat, lon, AppId)
+        val call = service.search("barc")
 
-        call.enqueue(object : Callback<WeatherResponse> {
-            override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
+        call.enqueue(object : Callback<ApiResponseWrapper> {
+            override fun onResponse(call: Call<ApiResponseWrapper>, response: Response<ApiResponseWrapper>) {
                 if (response.code() == 200) {
-                    val weatherResponse = response.body()!!
+                    val responseBody = response.body()!!
 
-                    val stringBuilder = "Country: " +
-                            weatherResponse.sys!!.country +
-                            "\n" +
-                            "Temperature: " +
-                            weatherResponse.main!!.temp +
-                            "\n" +
-                            "Temperature(Min): " +
-                            weatherResponse.main!!.temp_min +
-                            "\n" +
-                            "Temperature(Max): " +
-                            weatherResponse.main!!.temp_max +
-                            "\n" +
-                            "Humidity: " +
-                            weatherResponse.main!!.humidity +
-                            "\n" +
-                            "Pressure: " +
-                            weatherResponse.main!!.pressure
-
-                    weatherLiveData.postValue(stringBuilder)
+                    weatherLiveData.postValue("worked!")
                 }
             }
 
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ApiResponseWrapper>, t: Throwable) {
                 weatherLiveData.postValue(t.message)
             }
         })
