@@ -1,6 +1,8 @@
 package com.example.mtctrial.ui.view
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +13,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mtctrial.R
-import com.example.mtctrial.ui.adapter.*
+import com.example.mtctrial.ui.adapter.ButtonListElement
+import com.example.mtctrial.ui.adapter.ListElement
+import com.example.mtctrial.ui.adapter.RecyclerAdapter
+import com.example.mtctrial.ui.adapter.SeparatorListElement
 import com.example.mtctrial.ui.viewmodel.MainViewModel
 import com.example.mtctrial.ui.viewmodelfactory.MainViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
+import java.util.*
 
 
 class MainFragment : Fragment() {
 
     private var showMorePlayersButton = false
     private var showMoreTeamsButton = false
+
+    private var timer: Timer = Timer()
+    private val DELAY: Long = 400
 
     companion object {
         fun newInstance() = MainFragment()
@@ -38,7 +47,7 @@ class MainFragment : Fragment() {
         override fun onClick(element: ListElement) {
 
             if (viewModel.currentSearchString.isEmpty()) return
-            
+
             if (element is ButtonListElement){
                 when (element.type){
                     ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> {
@@ -87,16 +96,38 @@ class MainFragment : Fragment() {
 
     private fun initListeners() {
         btnSearchButton.setOnClickListener {
-            val searchString: String = etSearchField.text.toString().toLowerCase()
-            viewModel.currentSearchString = searchString
-            showMorePlayersButton = false
-            showMoreTeamsButton = false
-            updateList()
-
-            if (searchString.isEmpty()) return@setOnClickListener
-
-            viewModel.searchData(searchString, null, null)
+            doSearch()
         }
+
+        etSearchField.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                val searchText = s?.toString() ?: ""
+                if (searchText.length >= 3) {
+                    timer = Timer()
+                    timer.schedule(object : TimerTask() {
+                        override fun run() {
+                            doSearch()
+                        }
+                    }, DELAY)
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                timer.cancel()
+            }
+        })
+    }
+
+    private fun doSearch() {
+        val searchString: String = etSearchField.text.toString().toLowerCase()
+        viewModel.currentSearchString = searchString
+        showMorePlayersButton = false
+        showMoreTeamsButton = false
+        updateList()
+
+        if (searchString.isEmpty()) return
+
+        viewModel.searchData(searchString, null, null)
     }
 
     private fun initObservers() {
