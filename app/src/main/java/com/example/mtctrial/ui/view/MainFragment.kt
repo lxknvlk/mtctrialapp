@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,9 +18,6 @@ import kotlinx.android.synthetic.main.main_fragment.*
 
 
 class MainFragment : Fragment() {
-
-    private val playerList: MutableList<PlayerListElement> = mutableListOf()
-    private val teamList: MutableList<TeamListElement> = mutableListOf()
 
     companion object {
         fun newInstance() = MainFragment()
@@ -95,14 +91,14 @@ class MainFragment : Fragment() {
 
     private fun initObservers() {
         viewModel.playerLiveData.observe(viewLifecycleOwner, Observer { playerListElements ->
-            playerList.clear()
-            playerList.addAll(playerListElements)
+            viewModel.originalPlayerList.clear()
+            viewModel.originalPlayerList.addAll(playerListElements)
             updateList()
         })
 
         viewModel.teamLiveData.observe(viewLifecycleOwner, Observer { teamListElements ->
-            teamList.clear()
-            teamList.addAll(teamListElements)
+            viewModel.originalTeamList.clear()
+            viewModel.originalTeamList.addAll(teamListElements)
             updateList()
         })
 
@@ -122,48 +118,37 @@ class MainFragment : Fragment() {
     }
 
     private fun updateList() {
-        viewModel.originalList.clear()
-        viewModel.originalList.add(SeparatorListElement("Players"))
-        viewModel.originalList.addAll(playerList)
-        viewModel.originalList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
-        viewModel.originalList.add(SeparatorListElement("Teams"))
-        viewModel.originalList.addAll(teamList)
-        viewModel.originalList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
-
         viewModel.currentPlayersList = 0
         viewModel.currentTeamsList = 0
 
-        val filtered = viewModel.originalList.filter {
-            val playerElementMatchesQuery = it is PlayerListElement && (
-                    it.playerSecondName.toLowerCase().contains(viewModel.currentSearchString)
-                            || it.playerFirstName.toLowerCase().contains(viewModel.currentSearchString)
-                            || it.playerClub.toLowerCase().contains(viewModel.currentSearchString)
-                            || it.playerNationality.toLowerCase().contains(viewModel.currentSearchString))
+        val filteredPlayerList = viewModel.originalPlayerList.filter {
+            val add = viewModel.filterListElement(it)
+            if (add) viewModel.currentPlayersList ++
+            add
+        }
 
-            val teamElementMatchesQuery = it is TeamListElement && (
-                    it.teamStadium.toLowerCase().contains(viewModel.currentSearchString)
-                            || it.teamNationality.toLowerCase().contains(viewModel.currentSearchString)
-                            || it.teamCity.toLowerCase().contains(viewModel.currentSearchString)
-                            || it.teamName.toLowerCase().contains(viewModel.currentSearchString))
-
-            val isSeparatorElement = it is SeparatorListElement
-            val isSearchStringEmpty = viewModel.currentSearchString.isEmpty()
-            val isButtonListElement = it is ButtonListElement
-
-            when (it){
-                is PlayerListElement -> viewModel.currentPlayersList ++
-                is TeamListElement -> viewModel.currentTeamsList ++
-            }
-
-            isButtonListElement
-                    || isSeparatorElement
-                    || isSearchStringEmpty
-                    || playerElementMatchesQuery
-                    || teamElementMatchesQuery
+        val filteredTeamsList = viewModel.originalTeamList.filter {
+            val add = viewModel.filterListElement(it)
+            if (add) viewModel.currentTeamsList ++
+            add
         }
 
         viewModel.filteredList.clear()
-        viewModel.filteredList.addAll(filtered)
+        if (filteredPlayerList.isNotEmpty()) {
+            viewModel.filteredList.add(SeparatorListElement("Players (${filteredPlayerList.size})"))
+            viewModel.filteredList.addAll(filteredPlayerList)
+            viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
+        }
+
+        if (filteredTeamsList.isNotEmpty()) {
+            viewModel.filteredList.add(SeparatorListElement("Teams (${filteredTeamsList.size})"))
+            viewModel.filteredList.addAll(filteredTeamsList)
+            viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
+        }
+
+        if (viewModel.filteredList.isEmpty()){
+            viewModel.filteredList.add(SeparatorListElement("No results found"))
+        }
 
         if (rvList.adapter == null){
             rvList.adapter = context?.let { RecyclerAdapter(it, listener, viewModel.filteredList.toMutableList()) }

@@ -11,16 +11,15 @@ import com.example.mtctrial.data.database.AppDatabase
 import com.example.mtctrial.data.database.mapper.PlayerMapper
 import com.example.mtctrial.data.database.mapper.TeamMapper
 import com.example.mtctrial.data.database.repository.DataRepository
-import com.example.mtctrial.ui.adapter.ListElement
-import com.example.mtctrial.ui.adapter.PlayerListElement
-import com.example.mtctrial.ui.adapter.TeamListElement
+import com.example.mtctrial.ui.adapter.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    val originalList: MutableList<ListElement> = mutableListOf()
     val filteredList: MutableList<ListElement> = mutableListOf()
+    val originalPlayerList: MutableList<PlayerListElement> = mutableListOf()
+    val originalTeamList: MutableList<TeamListElement> = mutableListOf()
     var currentSearchString: String = ""
     var currentPlayersList: Int = 0
     var currentTeamsList: Int = 0
@@ -92,5 +91,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             dataRepository.persistData(playerEntities, teamEntities)
             requestSpinnerLiveData.postValue(false)
         }
+    }
+
+    fun filterListElement(it: ListElement): Boolean {
+        val playerElementMatchesQuery = it is PlayerListElement && (
+                it.playerSecondName.toLowerCase().contains(currentSearchString)
+                        || it.playerFirstName.toLowerCase().contains(currentSearchString)
+                        || it.playerClub.toLowerCase().contains(currentSearchString)
+                        || it.playerNationality.toLowerCase().contains(currentSearchString))
+
+        val teamElementMatchesQuery = it is TeamListElement && (
+                it.teamStadium.toLowerCase().contains(currentSearchString)
+                        || it.teamNationality.toLowerCase().contains(currentSearchString)
+                        || it.teamCity.toLowerCase().contains(currentSearchString)
+                        || it.teamName.toLowerCase().contains(currentSearchString))
+
+        val isSeparatorElement = it is SeparatorListElement
+        val isSearchStringEmpty = currentSearchString.isEmpty()
+        val isButtonListElement = it is ButtonListElement
+
+        return isButtonListElement
+                || isSeparatorElement
+                || isSearchStringEmpty
+                || playerElementMatchesQuery
+                || teamElementMatchesQuery
     }
 }
