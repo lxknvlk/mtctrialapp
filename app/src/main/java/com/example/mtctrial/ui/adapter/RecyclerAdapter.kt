@@ -79,7 +79,7 @@ class RecyclerAdapter(
         val diffCallback = DataDiffCallback(elementsList, newElements)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         elementsList.clear()
-        elementsList.addAll(newElements.toMutableList())
+        elementsList.addAll(newElements)
         diffResult.dispatchUpdatesTo(this)
     }
 

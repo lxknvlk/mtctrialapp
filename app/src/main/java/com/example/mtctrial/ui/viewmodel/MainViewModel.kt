@@ -137,9 +137,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun togglePlayerFavorite(element: PlayerListElement) {
-        element.isFavorite = !element.isFavorite
         viewModelScope.launch(Dispatchers.IO) {
-            dataRepository.updatePlayer(playerMapper.listElementToEntity(element))
+            dataRepository.updatePlayer(playerMapper.listElementToEntity(element.copy(isFavorite = !element.isFavorite)))
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.example.mtctrial.ui.adapter
 
-class PlayerListElement(
+data class PlayerListElement(
     var playerID: String = "",
     var playerFirstName: String = "",
     var playerSecondName: String = "",

@@ -88,6 +88,10 @@ class MainFragment : Fragment() {
 
         rvList.addItemDecoration(dividerItemDecoration)
 
+        rvList.adapter = context?.let {
+            RecyclerAdapter(it, listener, mutableListOf())
+        }
+
         initObservers()
         initListeners()
     }
@@ -114,7 +118,7 @@ class MainFragment : Fragment() {
     }
 
     private fun doSearch() {
-        val searchString: String = etSearchField.text.toString().toLowerCase()
+        val searchString: String = etSearchField.text.toString().toLowerCase(Locale.ROOT)
         viewModel.currentSearchString = searchString
         showMorePlayersButton = false
         showMoreTeamsButton = false
@@ -197,13 +201,7 @@ class MainFragment : Fragment() {
         }
 
         activity?.runOnUiThread {
-            if (rvList.adapter == null){
-                rvList.adapter = context?.let {
-                    RecyclerAdapter(it, listener, filteredList.toMutableList())
-                }
-            } else {
-                (rvList.adapter as RecyclerAdapter).setData(filteredList.toMutableList())
-            }
+            (rvList.adapter as RecyclerAdapter).setData(filteredList.toMutableList())
         }
     }
 }
