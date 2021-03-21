@@ -23,6 +23,12 @@ class DataRepository(
         }
     }
 
+    val favoritePlayerLiveData: LiveData<List<PlayerEntity>> by lazy {
+        Transformations.map(appDatabase.playerDao().getAllFavoritesLiveData()) { playerDataList ->
+            playerDataList.map { playerMapper.dataToEntity(it) }
+        }
+    }
+
     val teamLiveData: LiveData<List<TeamEntity>> by lazy {
         Transformations.map(appDatabase.teamDao().getAllLiveData()) { teamDataList ->
             teamDataList.map { teamMapper.dataToEntity(it) }

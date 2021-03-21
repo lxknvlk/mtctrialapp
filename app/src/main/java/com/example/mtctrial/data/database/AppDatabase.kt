@@ -18,7 +18,10 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase {
-            return INSTANCE ?: Room.databaseBuilder(context, AppDatabase::class.java, "app.db").build()
+            return INSTANCE
+                ?: Room.databaseBuilder(context, AppDatabase::class.java, "app.db")
+                    .enableMultiInstanceInvalidation()
+                    .build()
         }
     }
 

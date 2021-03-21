@@ -23,4 +23,7 @@ interface PlayerDao {
 
     @Delete
     fun delete(user: PlayerData)
+
+    @Query("SELECT * FROM player WHERE isFavorite")
+    fun getAllFavoritesLiveData(): LiveData<List<PlayerData>>
 }

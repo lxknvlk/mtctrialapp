@@ -44,6 +44,13 @@
             android:id="@+id/btnSearchButton"
             />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/ivFavButton"
+            android:src="@drawable/baseline_favorite_white_36"
+            app:tint="?attr/colorPrimaryVariant" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
