@@ -96,9 +96,9 @@ class MainFragment : Fragment() {
     private fun updateList() {
         val newList = mutableListOf<ListElement>()
 
-        newList.add(SeparatorListElement("Players"))
+        newList.add(SeparatorListElement("Players ${playerList.size}"))
         newList.addAll(playerList)
-        newList.add(SeparatorListElement("Teams"))
+        newList.add(SeparatorListElement("Teams ${teamList.size}"))
         newList.addAll(teamList)
 
         if (rvList.adapter == null){
