@@ -19,10 +19,16 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    public val originalList: MutableList<ListElement> = mutableListOf()
-    public val oldFilteredList: MutableList<ListElement> = mutableListOf()
-    public val filteredList: MutableList<ListElement> = mutableListOf()
-    public var currentSearchString: String = ""
+    val originalList: MutableList<ListElement> = mutableListOf()
+    val filteredList: MutableList<ListElement> = mutableListOf()
+    var currentSearchString: String = ""
+    var currentPlayersList: Int = 0
+    var currentTeamsList: Int = 0
+
+    enum class SearchType(type: String){
+        PLAYERS("players"),
+        TEAMS("teams")
+    }
 
     private val apiClient: ApiClient by lazy {
         ApiClient()
@@ -48,20 +54,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    val networkErrorLiveData = MutableLiveData<Boolean>()
+    val networkErrorLiveData = MutableLiveData<String>()
     val requestSpinnerLiveData = MutableLiveData<Boolean>()
 
     val playerLiveData: LiveData<List<PlayerListElement>> by lazy {
         Transformations.map(dataRepository.playerLiveData) { playerEntityList ->
             playerEntityList.map { playerEntity ->
-                PlayerListElement(
-                    playerID = playerEntity.playerID ?: "",
-                    playerFirstName = playerEntity.playerFirstName ?: "",
-                    playerSecondName = playerEntity.playerSecondName ?: "",
-                    playerNationality = playerEntity.playerNationality ?: "",
-                    playerAge = playerEntity.playerAge,
-                    playerClub = playerEntity.playerClub ?: ""
-                )
+                playerMapper.entityToListElement(playerEntity)
             }
         }
     }
@@ -69,33 +68,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val teamLiveData: LiveData<List<TeamListElement>> by lazy {
         Transformations.map(dataRepository.teamLiveData) { playerEntityList ->
             playerEntityList.map { teamEntity ->
-                TeamListElement(
-                        teamID = teamEntity.teamID ?: "",
-                        teamName = teamEntity.teamName ?: "",
-                        teamStadium = teamEntity.teamStadium ?: "",
-                        isNation = teamEntity.isNation ?: "",
-                        teamNationality = teamEntity.teamNationality ?: "",
-                        teamCity = teamEntity.teamCity ?: ""
-                    )
+                teamMapper.entityToListElement(teamEntity)
             }
         }
     }
 
-    fun searchData(searchString: String) {
+    fun searchData(searchString: String, searchType: SearchType?, offset: Int?) {
         viewModelScope.launch(Dispatchers.IO) {
             requestSpinnerLiveData.postValue(true)
             val responseWrapper: ApiResponseWrapper = apiClient.search(searchString)
 
-            if (responseWrapper.error != null && responseWrapper.error == "network"){
-                networkErrorLiveData.postValue(true)
+            if (responseWrapper.error != null){
+                networkErrorLiveData.postValue(responseWrapper.error)
                 requestSpinnerLiveData.postValue(false)
                 return@launch
             }
 
             val searchResponse = responseWrapper.result ?: return@launch
 
-            val playerEntities: List<PlayerEntity>? = searchResponse.playerEntities
-            val teamEntities: List<TeamEntity>? = searchResponse.teamEntities
+            val playerEntities: List<PlayerEntity>? = searchResponse.players
+            val teamEntities: List<TeamEntity>? = searchResponse.teams
 
             dataRepository.persistData(playerEntities, teamEntities)
             requestSpinnerLiveData.postValue(false)

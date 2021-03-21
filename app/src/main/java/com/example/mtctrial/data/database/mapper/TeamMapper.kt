@@ -2,6 +2,7 @@ package com.example.mtctrial.data.database.mapper
 
 import com.example.mtctrial.data.api.model.TeamEntity
 import com.example.mtctrial.data.database.model.TeamData
+import com.example.mtctrial.ui.adapter.TeamListElement
 
 class TeamMapper {
     fun dataToEntity(data: TeamData): TeamEntity {
@@ -23,6 +24,17 @@ class TeamMapper {
             teamName = entity.teamName,
             teamID = entity.teamID ?: "",
             isNation = entity.isNation
+        )
+    }
+
+    fun entityToListElement(teamEntity: TeamEntity): TeamListElement {
+        return TeamListElement(
+            teamID = teamEntity.teamID ?: "",
+            teamName = teamEntity.teamName ?: "",
+            teamStadium = teamEntity.teamStadium ?: "",
+            isNation = teamEntity.isNation ?: "",
+            teamNationality = teamEntity.teamNationality ?: "",
+            teamCity = teamEntity.teamCity ?: ""
         )
     }
 

@@ -2,6 +2,7 @@ package com.example.mtctrial.data.database.mapper
 
 import com.example.mtctrial.data.api.model.PlayerEntity
 import com.example.mtctrial.data.database.model.PlayerData
+import com.example.mtctrial.ui.adapter.PlayerListElement
 
 class PlayerMapper {
     fun dataToEntity(data: PlayerData): PlayerEntity {
@@ -23,6 +24,17 @@ class PlayerMapper {
             playerAge = entity.playerAge,
             playerClub = entity.playerClub,
             playerNationality = entity.playerNationality
+        )
+    }
+
+    fun entityToListElement(playerEntity: PlayerEntity): PlayerListElement {
+        return PlayerListElement(
+            playerID = playerEntity.playerID ?: "",
+            playerFirstName = playerEntity.playerFirstName ?: "",
+            playerSecondName = playerEntity.playerSecondName ?: "",
+            playerNationality = playerEntity.playerNationality ?: "",
+            playerAge = playerEntity.playerAge ?: "",
+            playerClub = playerEntity.playerClub ?: ""
         )
     }
 

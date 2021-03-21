@@ -41,11 +41,17 @@ class MainFragment : Fragment() {
             if (element is ButtonListElement){
                 when (element.type){
                     ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> {
-
+                        viewModel.searchData(
+                            viewModel.currentSearchString,
+                            MainViewModel.SearchType.PLAYERS,
+                            viewModel.currentPlayersList)
                     }
 
                     ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS -> {
-
+                        viewModel.searchData(
+                            viewModel.currentSearchString,
+                            MainViewModel.SearchType.TEAMS,
+                            viewModel.currentTeamsList)
                     }
                 }
             }
@@ -84,7 +90,7 @@ class MainFragment : Fragment() {
 
             if (searchString.isEmpty()) return@setOnClickListener
 
-            viewModel.searchData(searchString)
+            viewModel.searchData(searchString, null, null)
         }
     }
 
@@ -102,7 +108,7 @@ class MainFragment : Fragment() {
         })
 
         viewModel.networkErrorLiveData.observe(viewLifecycleOwner, Observer { error ->
-            if (error) Toast.makeText(activity, "Network error, is network turned on?", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, error, Toast.LENGTH_SHORT).show()
         })
 
         viewModel.requestSpinnerLiveData.observe(viewLifecycleOwner, Observer { requestInProcess ->
@@ -118,12 +124,15 @@ class MainFragment : Fragment() {
 
     private fun updateList() {
         viewModel.originalList.clear()
-        viewModel.originalList.add(SeparatorListElement("Players ${playerList.size}"))
+        viewModel.originalList.add(SeparatorListElement("Players"))
         viewModel.originalList.addAll(playerList)
         viewModel.originalList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
-        viewModel.originalList.add(SeparatorListElement("Teams ${teamList.size}"))
+        viewModel.originalList.add(SeparatorListElement("Teams"))
         viewModel.originalList.addAll(teamList)
         viewModel.originalList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
+
+        viewModel.currentPlayersList = 0
+        viewModel.currentTeamsList = 0
 
         val filtered = viewModel.originalList.filter {
             val playerElementMatchesQuery = it is PlayerListElement && (
@@ -140,6 +149,11 @@ class MainFragment : Fragment() {
 
             val isSeparatorElement = it is SeparatorListElement
             val isSearchStringEmpty = viewModel.currentSearchString.isEmpty()
+
+            when (it){
+                is PlayerListElement -> viewModel.currentPlayersList ++
+                is TeamListElement -> viewModel.currentTeamsList ++
+            }
 
             isSeparatorElement || isSearchStringEmpty || playerElementMatchesQuery || teamElementMatchesQuery
         }

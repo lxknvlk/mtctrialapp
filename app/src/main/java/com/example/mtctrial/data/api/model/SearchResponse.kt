@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName
 
 class SearchResponse {
     @SerializedName("players")
-    var playerEntities: List<PlayerEntity>? = null
+    var players: List<PlayerEntity>? = null
 
     @SerializedName("teams")
-    var teamEntities: List<TeamEntity>? = null
+    var teams: List<TeamEntity>? = null
 
     @SerializedName("status")
     var status: Boolean = true

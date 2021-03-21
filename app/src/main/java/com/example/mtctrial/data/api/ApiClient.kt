@@ -1,7 +1,6 @@
 package com.example.mtctrial.data.api
 
 import com.example.mtctrial.data.api.model.ApiResponseWrapper
-import com.example.mtctrial.data.api.model.SearchResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -25,7 +24,7 @@ class ApiClient {
         } catch (e: Exception) {
             e.printStackTrace()
             val response = ApiResponseWrapper()
-            response.error = "network"
+            response.error = e.message
             response
         }
     }

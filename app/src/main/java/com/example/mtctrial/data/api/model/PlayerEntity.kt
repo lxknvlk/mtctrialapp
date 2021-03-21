@@ -16,7 +16,7 @@ class PlayerEntity {
     var playerNationality: String? = null
 
     @SerializedName("playerAge")
-    var playerAge: Int = 0
+    var playerAge: String? = null
 
     @SerializedName("playerClub")
     var playerClub: String? = null

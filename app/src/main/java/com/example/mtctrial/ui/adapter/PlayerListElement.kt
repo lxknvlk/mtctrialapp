@@ -5,6 +5,6 @@ class PlayerListElement(
     var playerFirstName: String = "",
     var playerSecondName: String = "",
     var playerNationality: String = "",
-    var playerAge: Int = 0,
+    var playerAge: String = "",
     var playerClub: String = ""
 ) : ListElement()

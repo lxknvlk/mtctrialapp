@@ -11,6 +11,6 @@ data class PlayerData(
     @ColumnInfo(name = "playerFirstName") val playerFirstName: String?,
     @ColumnInfo(name = "playerSecondName") val playerSecondName: String?,
     @ColumnInfo(name = "playerNationality") val playerNationality: String?,
-    @ColumnInfo(name = "playerAge") val playerAge: Int,
+    @ColumnInfo(name = "playerAge") val playerAge: String?,
     @ColumnInfo(name = "playerClub") val playerClub: String?
 )
