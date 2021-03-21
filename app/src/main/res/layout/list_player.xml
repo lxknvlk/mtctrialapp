@@ -66,8 +66,16 @@
     </LinearLayout>
 
     <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/ivCountryFlag"
+        android:src="@drawable/unknown"
+        />
+
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginStart="12dp"
         android:id="@+id/ivFavorite"
         android:src="@drawable/baseline_favorite_border_white_36"
         app:tint="?attr/colorPrimaryVariant" />

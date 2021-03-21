@@ -13,12 +13,15 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mtctrial.R
+import com.example.mtctrial.utils.FlagName
 
 class RecyclerAdapter(
     private val context: Context,
     private val listener: Listener,
     private val elementsList: MutableList<ListElement>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val flagName = FlagName.getInstance()
 
     companion object {
         private const val TYPE_SEPARATOR = 0
@@ -111,11 +114,16 @@ class RecyclerAdapter(
         private val tvTeamName: TextView = view.findViewById(R.id.tvTeamName)
         private val tvCity: TextView = view.findViewById(R.id.tvCity)
         private val tvStadium: TextView = view.findViewById(R.id.tvStadium)
+        private val ivCountryFlag: ImageView = view.findViewById(R.id.ivCountryFlag)
         override fun bind(item: ListElement) {
             item as TeamListElement
             tvTeamName.text = item.teamName.trim()
             tvCity.text = item.teamCity.trim()
             tvStadium.text = item.teamStadium.trim()
+
+            val flagFileName = flagName.getFlagFilenameForNationality(item.teamNationality, context)
+            val identifier = context.resources.getIdentifier(flagFileName, "drawable", context.packageName)
+            ivCountryFlag.setImageDrawable(ContextCompat.getDrawable(context, identifier))
         }
     }
 
@@ -126,12 +134,17 @@ class RecyclerAdapter(
         private val tvClub: TextView = view.findViewById(R.id.tvClub)
         private val ivFavorite: ImageView = view.findViewById(R.id.ivFavorite)
         private val llRoot: LinearLayout = view.findViewById(R.id.llRoot)
+        private val ivCountryFlag: ImageView = view.findViewById(R.id.ivCountryFlag)
         override fun bind(item: ListElement) {
             item as PlayerListElement
             tvFirstName.text = item.playerFirstName.trim()
             tvSecondName.text = item.playerSecondName.trim()
             tvAge.text = item.playerAge.toString().trim()
             tvClub.text = item.playerClub.trim()
+
+            val flagFileName = flagName.getFlagFilenameForNationality(item.playerNationality, context)
+            val identifier = context.resources.getIdentifier(flagFileName, "drawable", context.packageName)
+            ivCountryFlag.setImageDrawable(ContextCompat.getDrawable(context, identifier))
 
             ivFavorite.setImageDrawable(
                 ContextCompat.getDrawable(context, R.drawable.baseline_favorite_border_white_36))
