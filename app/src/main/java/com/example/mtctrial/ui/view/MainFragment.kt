@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -32,6 +33,23 @@ class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+    }
+
+    private val listener: RecyclerAdapter.Listener = object: RecyclerAdapter.Listener {
+        override fun onClick(element: ListElement) {
+            Toast.makeText(activity, "More button clicked", Toast.LENGTH_SHORT).show()
+            if (element is ButtonListElement){
+                when (element.type){
+                    ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> {
+
+                    }
+
+                    ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS -> {
+
+                    }
+                }
+            }
+        }
     }
 
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -102,8 +120,10 @@ class MainFragment : Fragment() {
         viewModel.originalList.clear()
         viewModel.originalList.add(SeparatorListElement("Players ${playerList.size}"))
         viewModel.originalList.addAll(playerList)
+        viewModel.originalList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
         viewModel.originalList.add(SeparatorListElement("Teams ${teamList.size}"))
         viewModel.originalList.addAll(teamList)
+        viewModel.originalList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
 
         val filtered = viewModel.originalList.filter {
             val playerElementMatchesQuery = it is PlayerListElement && (
@@ -128,7 +148,7 @@ class MainFragment : Fragment() {
         viewModel.filteredList.addAll(filtered)
 
         if (rvList.adapter == null){
-            rvList.adapter = context?.let { RecyclerAdapter(it, viewModel.filteredList.toMutableList()) }
+            rvList.adapter = context?.let { RecyclerAdapter(it, listener, viewModel.filteredList.toMutableList()) }
         } else {
             (rvList.adapter as RecyclerAdapter).setData(viewModel.filteredList)
         }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.example.mtctrial.R
 
 class RecyclerAdapter(
     private val context: Context,
+    private val listener: Listener,
     private var elementsList: MutableList<ListElement>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -18,6 +20,7 @@ class RecyclerAdapter(
         private const val TYPE_SEPARATOR = 0
         private const val TYPE_PLAYER = 1
         private const val TYPE_TEAM = 2
+        private const val TYPE_LIST_BUTTON = 3
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ListElement> {
@@ -34,6 +37,11 @@ class RecyclerAdapter(
                 val view = LayoutInflater.from(context).inflate(R.layout.list_team, parent, false)
                 TeamViewHolder(view)
             }
+            TYPE_LIST_BUTTON -> {
+                val view = LayoutInflater.from(context).inflate(R.layout.list_button, parent, false)
+                ListButtonViewholder(view)
+            }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -43,6 +51,7 @@ class RecyclerAdapter(
             is PlayerListElement -> TYPE_PLAYER
             is SeparatorListElement -> TYPE_SEPARATOR
             is TeamListElement -> TYPE_TEAM
+            is ButtonListElement -> TYPE_LIST_BUTTON
             else -> throw IllegalArgumentException("Invalid type of data $position")
         }
     }
@@ -57,6 +66,7 @@ class RecyclerAdapter(
             is PlayerViewHolder ->      holder.bind(element as PlayerListElement)
             is SeparatorViewHolder ->   holder.bind(element as SeparatorListElement)
             is TeamViewHolder ->        holder.bind(element as TeamListElement)
+            is ListButtonViewholder ->  holder.bind(element as ButtonListElement)
             else -> throw IllegalArgumentException()
         }
     }
@@ -73,7 +83,22 @@ class RecyclerAdapter(
         private val tvTitle: TextView = view.findViewById(R.id.tvTitle)
         override fun bind(item: ListElement) {
             item as SeparatorListElement
-            tvTitle.text = item.title
+            tvTitle.text = item.title.trim()
+        }
+    }
+
+    inner class ListButtonViewholder(view: View) : BaseViewHolder<ListElement>(view) {
+        private val btnButton: Button = view.findViewById(R.id.btnButton)
+        override fun bind(item: ListElement) {
+            item as ButtonListElement
+            when (item.type) {
+                ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS -> btnButton.text = "More Teams"
+                ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> btnButton.text = "More Players"
+            }
+
+            btnButton.setOnClickListener {
+                listener.onClick(item)
+            }
         }
     }
 
@@ -83,9 +108,9 @@ class RecyclerAdapter(
         private val tvStadium: TextView = view.findViewById(R.id.tvStadium)
         override fun bind(item: ListElement) {
             item as TeamListElement
-            tvTeamName.text = item.teamName
-            tvCity.text = item.teamCity
-            tvStadium.text = item.teamStadium
+            tvTeamName.text = item.teamName.trim()
+            tvCity.text = item.teamCity.trim()
+            tvStadium.text = item.teamStadium.trim()
         }
     }
 
@@ -96,10 +121,14 @@ class RecyclerAdapter(
         private val tvClub: TextView = view.findViewById(R.id.tvClub)
         override fun bind(item: ListElement) {
             item as PlayerListElement
-            tvFirstName.text = item.playerFirstName
-            tvSecondName.text = item.playerSecondName
-            tvAge.text = item.playerAge.toString()
-            tvClub.text = item.playerClub
+            tvFirstName.text = item.playerFirstName.trim()
+            tvSecondName.text = item.playerSecondName.trim()
+            tvAge.text = item.playerAge.toString().trim()
+            tvClub.text = item.playerClub.trim()
         }
+    }
+
+    interface Listener {
+        fun onClick(element: ListElement)
     }
 }
