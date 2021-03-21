@@ -60,8 +60,13 @@ class MainFragment : Fragment() {
 
     private fun initListeners() {
         btnSearchButton.setOnClickListener {
-            val searchString: String = etSearchField.text.toString()
-            if (searchString.isNotEmpty()) viewModel.searchData(searchString)
+            val searchString: String = etSearchField.text.toString().toLowerCase()
+            viewModel.currentSearchString = searchString
+            updateList()
+
+            if (searchString.isEmpty()) return@setOnClickListener
+
+            viewModel.searchData(searchString)
         }
     }
 
@@ -94,17 +99,38 @@ class MainFragment : Fragment() {
     }
 
     private fun updateList() {
-        val newList = mutableListOf<ListElement>()
+        viewModel.originalList.clear()
+        viewModel.originalList.add(SeparatorListElement("Players ${playerList.size}"))
+        viewModel.originalList.addAll(playerList)
+        viewModel.originalList.add(SeparatorListElement("Teams ${teamList.size}"))
+        viewModel.originalList.addAll(teamList)
 
-        newList.add(SeparatorListElement("Players ${playerList.size}"))
-        newList.addAll(playerList)
-        newList.add(SeparatorListElement("Teams ${teamList.size}"))
-        newList.addAll(teamList)
+        val filtered = viewModel.originalList.filter {
+            val playerElementMatchesQuery = it is PlayerListElement && (
+                    it.playerSecondName.toLowerCase().contains(viewModel.currentSearchString)
+                            || it.playerFirstName.toLowerCase().contains(viewModel.currentSearchString)
+                            || it.playerClub.toLowerCase().contains(viewModel.currentSearchString)
+                            || it.playerNationality.toLowerCase().contains(viewModel.currentSearchString))
+
+            val teamElementMatchesQuery = it is TeamListElement && (
+                    it.teamStadium.toLowerCase().contains(viewModel.currentSearchString)
+                            || it.teamNationality.toLowerCase().contains(viewModel.currentSearchString)
+                            || it.teamCity.toLowerCase().contains(viewModel.currentSearchString)
+                            || it.teamName.toLowerCase().contains(viewModel.currentSearchString))
+
+            val isSeparatorElement = it is SeparatorListElement
+            val isSearchStringEmpty = viewModel.currentSearchString.isEmpty()
+
+            isSeparatorElement || isSearchStringEmpty || playerElementMatchesQuery || teamElementMatchesQuery
+        }
+
+        viewModel.filteredList.clear()
+        viewModel.filteredList.addAll(filtered)
 
         if (rvList.adapter == null){
-            rvList.adapter = context?.let { RecyclerAdapter(it, newList.toMutableList()) }
+            rvList.adapter = context?.let { RecyclerAdapter(it, viewModel.filteredList.toMutableList()) }
         } else {
-            (rvList.adapter as RecyclerAdapter).setData(newList)
+            (rvList.adapter as RecyclerAdapter).setData(viewModel.filteredList)
         }
     }
 }

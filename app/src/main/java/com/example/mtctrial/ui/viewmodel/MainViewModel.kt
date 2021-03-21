@@ -11,12 +11,18 @@ import com.example.mtctrial.data.database.AppDatabase
 import com.example.mtctrial.data.database.mapper.PlayerMapper
 import com.example.mtctrial.data.database.mapper.TeamMapper
 import com.example.mtctrial.data.database.repository.DataRepository
+import com.example.mtctrial.ui.adapter.ListElement
 import com.example.mtctrial.ui.adapter.PlayerListElement
 import com.example.mtctrial.ui.adapter.TeamListElement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
+
+    public val originalList: MutableList<ListElement> = mutableListOf()
+    public val oldFilteredList: MutableList<ListElement> = mutableListOf()
+    public val filteredList: MutableList<ListElement> = mutableListOf()
+    public var currentSearchString: String = ""
 
     private val apiClient: ApiClient by lazy {
         ApiClient()
@@ -49,12 +55,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Transformations.map(dataRepository.playerLiveData) { playerEntityList ->
             playerEntityList.map { playerEntity ->
                 PlayerListElement(
-                    playerID = playerEntity.playerID,
-                    playerFirstName = playerEntity.playerFirstName,
-                    playerSecondName = playerEntity.playerSecondName,
-                    playerNationality = playerEntity.playerNationality,
+                    playerID = playerEntity.playerID ?: "",
+                    playerFirstName = playerEntity.playerFirstName ?: "",
+                    playerSecondName = playerEntity.playerSecondName ?: "",
+                    playerNationality = playerEntity.playerNationality ?: "",
                     playerAge = playerEntity.playerAge,
-                    playerClub = playerEntity.playerClub
+                    playerClub = playerEntity.playerClub ?: ""
                 )
             }
         }
@@ -64,12 +70,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Transformations.map(dataRepository.teamLiveData) { playerEntityList ->
             playerEntityList.map { teamEntity ->
                 TeamListElement(
-                        teamID = teamEntity.teamID,
-                        teamName = teamEntity.teamName,
-                        teamStadium = teamEntity.teamStadium,
-                        isNation = teamEntity.isNation,
-                        teamNationality = teamEntity.teamNationality,
-                        teamCity = teamEntity.teamCity
+                        teamID = teamEntity.teamID ?: "",
+                        teamName = teamEntity.teamName ?: "",
+                        teamStadium = teamEntity.teamStadium ?: "",
+                        isNation = teamEntity.isNation ?: "",
+                        teamNationality = teamEntity.teamNationality ?: "",
+                        teamCity = teamEntity.teamCity ?: ""
                     )
             }
         }

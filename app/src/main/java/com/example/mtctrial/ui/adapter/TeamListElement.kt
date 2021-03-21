@@ -1,10 +1,10 @@
 package com.example.mtctrial.ui.adapter
 
 class TeamListElement(
-    var teamID: String? = null,
-    var teamName: String? = null,
-    var teamStadium: String? = null,
-    var isNation: String? = null,
-    var teamNationality: String? = null,
-    var teamCity: String? = null
+    var teamID: String = "",
+    var teamName: String = "",
+    var teamStadium: String = "",
+    var isNation: String = "",
+    var teamNationality: String = "",
+    var teamCity: String = ""
 ) : ListElement()
