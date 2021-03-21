@@ -15,7 +15,7 @@ interface TeamDao {
     @Query("SELECT * FROM team WHERE teamID = :teamID")
     fun findById(teamID: String): TeamData
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(teamList: List<TeamData>)
 
     @Delete

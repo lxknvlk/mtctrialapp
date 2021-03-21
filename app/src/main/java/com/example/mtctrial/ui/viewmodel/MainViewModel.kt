@@ -19,7 +19,6 @@ import java.text.Normalizer
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    val filteredList: MutableList<ListElement> = mutableListOf()
     val originalPlayerList: MutableList<PlayerListElement> = mutableListOf()
     val originalTeamList: MutableList<TeamListElement> = mutableListOf()
     var currentSearchString: String = ""
@@ -135,5 +134,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 || isSearchStringEmpty
                 || playerElementMatchesQuery
                 || teamElementMatchesQuery
+    }
+
+    fun togglePlayerFavorite(element: PlayerListElement) {
+        element.isFavorite = !element.isFavorite
+        viewModelScope.launch(Dispatchers.IO) {
+            dataRepository.updatePlayer(playerMapper.listElementToEntity(element))
+        }
     }
 }

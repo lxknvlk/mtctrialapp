@@ -30,11 +30,12 @@ class DataDiffCallback(
         val newItem = newList[newPosition]
 
         return if (oldItem is PlayerListElement && newItem is PlayerListElement){
-            oldItem.playerAge == oldItem.playerAge
-                    && oldItem.playerClub == oldItem.playerClub
-                    && oldItem.playerFirstName == oldItem.playerFirstName
-                    && oldItem.playerNationality == oldItem.playerNationality
-                    && oldItem.playerSecondName == oldItem.playerSecondName
+            oldItem.playerAge == newItem.playerAge
+                    && oldItem.playerClub == newItem.playerClub
+                    && oldItem.playerFirstName == newItem.playerFirstName
+                    && oldItem.playerNationality == newItem.playerNationality
+                    && oldItem.playerSecondName == newItem.playerSecondName
+                    && oldItem.isFavorite == newItem.isFavorite
         } else if (oldItem is TeamListElement && newItem is TeamListElement) {
             oldItem.teamCity == newItem.teamCity
                     && oldItem.teamName == newItem.teamName

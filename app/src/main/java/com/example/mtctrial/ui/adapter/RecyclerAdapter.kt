@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mtctrial.R
@@ -14,7 +17,7 @@ import com.example.mtctrial.R
 class RecyclerAdapter(
     private val context: Context,
     private val listener: Listener,
-    private var elementsList: MutableList<ListElement>
+    private val elementsList: MutableList<ListElement>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -76,7 +79,7 @@ class RecyclerAdapter(
         val diffCallback = DataDiffCallback(elementsList, newElements)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         elementsList.clear()
-        elementsList.addAll(newElements)
+        elementsList.addAll(newElements.toMutableList())
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -121,6 +124,8 @@ class RecyclerAdapter(
         private val tvSecondName: TextView = view.findViewById(R.id.tvSecondName)
         private val tvAge: TextView = view.findViewById(R.id.tvAge)
         private val tvClub: TextView = view.findViewById(R.id.tvClub)
+        private val ivFavorite: ImageView = view.findViewById(R.id.ivFavorite)
+        private val llRoot: LinearLayout = view.findViewById(R.id.llRoot)
         override fun bind(item: ListElement) {
             item as PlayerListElement
             tvFirstName.text = item.playerFirstName.trim()
@@ -128,10 +133,22 @@ class RecyclerAdapter(
             tvAge.text = item.playerAge.toString().trim()
             tvClub.text = item.playerClub.trim()
 
+            ivFavorite.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.baseline_favorite_border_white_36))
+
+            if (item.isFavorite) {
+                ivFavorite.setImageDrawable(
+                    ContextCompat.getDrawable(context, R.drawable.baseline_favorite_white_36))
+            }
+
             if (item.playerFirstName.trim().isEmpty()){
                 tvFirstName.visibility = View.GONE
             } else {
                 tvFirstName.visibility = View.VISIBLE
+            }
+
+            llRoot.setOnClickListener {
+                listener.onClick(item)
             }
         }
     }

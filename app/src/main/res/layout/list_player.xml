@@ -1,56 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:padding="8dp"
+    android:id="@+id/llRoot"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvFirstName"
-            android:text="FirstName"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/black"
-            />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvSecondName"
-            android:text="SecondName"
-            android:textColor="@color/black"
-            />
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvFirstName"
+                android:text="FirstName"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvSecondName"
+                android:text="SecondName"
+                android:textColor="@color/black"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvAge"
+                android:textColor="@color/black"
+                android:text="Age"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvClub"
+                android:textColor="@color/black"
+                android:text="Club"
+                android:layout_marginStart="64dp"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
+    <ImageView
         android:layout_width="wrap_content"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:id="@+id/ivFavorite"
+        android:src="@drawable/baseline_favorite_border_white_36"
+        app:tint="?attr/colorPrimaryVariant" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvAge"
-            android:textColor="@color/black"
-            android:text="Age"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvClub"
-            android:textColor="@color/black"
-            android:text="Club"
-            android:layout_marginStart="64dp"
-            />
-
-    </LinearLayout>
 </LinearLayout>

@@ -21,6 +21,9 @@ class PlayerEntity {
     @SerializedName("playerClub")
     var playerClub: String? = null
 
+    @SerializedName("isFavorite")
+    var isFavorite: Boolean = false
+
     override fun toString(): String {
         return "$playerFirstName $playerSecondName"
     }

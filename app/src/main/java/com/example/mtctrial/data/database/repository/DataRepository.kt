@@ -18,15 +18,19 @@ class DataRepository(
 ) {
 
     val playerLiveData: LiveData<List<PlayerEntity>> by lazy {
-        Transformations.map(appDatabase.playerDao().getAllLiveData()) {
-            it.map { playerMapper.dataToEntity(it) }
+        Transformations.map(appDatabase.playerDao().getAllLiveData()) { playerDataList ->
+            playerDataList.map { playerMapper.dataToEntity(it) }
         }
     }
 
     val teamLiveData: LiveData<List<TeamEntity>> by lazy {
-        Transformations.map(appDatabase.teamDao().getAllLiveData()) {
-            it.map { teamMapper.dataToEntity(it) }
+        Transformations.map(appDatabase.teamDao().getAllLiveData()) { teamDataList ->
+            teamDataList.map { teamMapper.dataToEntity(it) }
         }
+    }
+
+    fun updatePlayer(playerEntity: PlayerEntity){
+        appDatabase.playerDao().update(playerMapper.entityToData(playerEntity))
     }
 
     fun persistData(players: List<PlayerEntity>?, teams: List<TeamEntity>?){

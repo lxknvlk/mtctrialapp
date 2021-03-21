@@ -12,5 +12,6 @@ data class PlayerData(
     @ColumnInfo(name = "playerSecondName") val playerSecondName: String?,
     @ColumnInfo(name = "playerNationality") val playerNationality: String?,
     @ColumnInfo(name = "playerAge") val playerAge: String?,
-    @ColumnInfo(name = "playerClub") val playerClub: String?
+    @ColumnInfo(name = "playerClub") val playerClub: String?,
+    @ColumnInfo(name = "isFavorite") val isFavorite: Boolean
 )

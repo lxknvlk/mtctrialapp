@@ -6,9 +6,10 @@ class PlayerListElement(
     var playerSecondName: String = "",
     var playerNationality: String = "",
     var playerAge: String = "",
-    var playerClub: String = ""
+    var playerClub: String = "",
+    var isFavorite: Boolean = false
 ) : ListElement() {
     override fun toString(): String {
-        return "$playerFirstName $playerSecondName"
+        return "$playerFirstName $playerSecondName $isFavorite"
     }
 }

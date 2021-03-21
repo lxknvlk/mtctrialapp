@@ -13,10 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mtctrial.R
-import com.example.mtctrial.ui.adapter.ButtonListElement
-import com.example.mtctrial.ui.adapter.ListElement
-import com.example.mtctrial.ui.adapter.RecyclerAdapter
-import com.example.mtctrial.ui.adapter.SeparatorListElement
+import com.example.mtctrial.ui.adapter.*
 import com.example.mtctrial.ui.viewmodel.MainViewModel
 import com.example.mtctrial.ui.viewmodelfactory.MainViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
@@ -45,10 +42,9 @@ class MainFragment : Fragment() {
 
     private val listener: RecyclerAdapter.Listener = object: RecyclerAdapter.Listener {
         override fun onClick(element: ListElement) {
-
-            if (viewModel.currentSearchString.isEmpty()) return
-
             if (element is ButtonListElement){
+                if (viewModel.currentSearchString.isEmpty()) return
+
                 when (element.type){
                     ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> {
                         showMorePlayersButton = false
@@ -66,6 +62,8 @@ class MainFragment : Fragment() {
                             viewModel.currentTeamsList)
                     }
                 }
+            } else if (element is PlayerListElement) {
+                viewModel.togglePlayerFavorite(element)
             }
         }
     }
@@ -101,15 +99,12 @@ class MainFragment : Fragment() {
 
         etSearchField.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val searchText = s?.toString() ?: ""
-                if (searchText.length >= 3) {
-                    timer = Timer()
-                    timer.schedule(object : TimerTask() {
-                        override fun run() {
-                            doSearch()
-                        }
-                    }, DELAY)
-                }
+                timer = Timer()
+                timer.schedule(object : TimerTask() {
+                    override fun run() {
+                        doSearch()
+                    }
+                }, DELAY)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -182,31 +177,33 @@ class MainFragment : Fragment() {
             add
         }
 
-        viewModel.filteredList.clear()
+        val filteredList = mutableListOf<ListElement>()
         if (filteredPlayerList.isNotEmpty()) {
-            viewModel.filteredList.add(SeparatorListElement("Players (${filteredPlayerList.size})"))
-            viewModel.filteredList.addAll(filteredPlayerList)
+            filteredList.add(SeparatorListElement("Players (${filteredPlayerList.size})"))
+            filteredList.addAll(filteredPlayerList)
             if (showMorePlayersButton)
-                viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
+                filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
         }
 
         if (filteredTeamsList.isNotEmpty()) {
-            viewModel.filteredList.add(SeparatorListElement("Teams (${filteredTeamsList.size})"))
-            viewModel.filteredList.addAll(filteredTeamsList)
+            filteredList.add(SeparatorListElement("Teams (${filteredTeamsList.size})"))
+            filteredList.addAll(filteredTeamsList)
             if (showMoreTeamsButton)
-                viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
+                filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
         }
 
-        if (viewModel.filteredList.isEmpty()){
-            viewModel.filteredList.add(SeparatorListElement("No results found"))
+        if (filteredList.isEmpty()){
+            filteredList.add(SeparatorListElement("No results found"))
         }
 
-        if (rvList.adapter == null){
-            rvList.adapter = context?.let {
-                RecyclerAdapter(it, listener, viewModel.filteredList.toMutableList())
+        activity?.runOnUiThread {
+            if (rvList.adapter == null){
+                rvList.adapter = context?.let {
+                    RecyclerAdapter(it, listener, filteredList.toMutableList())
+                }
+            } else {
+                (rvList.adapter as RecyclerAdapter).setData(filteredList.toMutableList())
             }
-        } else {
-            (rvList.adapter as RecyclerAdapter).setData(viewModel.filteredList)
         }
     }
 }
