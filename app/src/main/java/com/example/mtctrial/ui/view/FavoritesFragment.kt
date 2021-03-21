@@ -27,16 +27,6 @@ class FavoritesFragment : DialogFragment() {
         fun newInstance() = FavoritesFragment()
     }
 
-    interface OnDismissListener {
-        fun dismissed()
-    }
-
-    private var onDismissListener: OnDismissListener? = null
-
-    fun setOnDismissListener(onDismissListener: OnDismissListener){
-        this.onDismissListener = onDismissListener
-    }
-
     private lateinit var viewModel: FavoritesViewModel
     private lateinit var linearLayoutManager: LinearLayoutManager
 
@@ -83,10 +73,5 @@ class FavoritesFragment : DialogFragment() {
         viewModel.favoritePlayersLiveData.observe(this, Observer { playerListElements ->
             (rvList.adapter as RecyclerAdapter).setData(playerListElements.toMutableList())
         })
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        onDismissListener?.dismissed()
-        super.onDismiss(dialog)
     }
 }

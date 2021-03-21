@@ -2,6 +2,7 @@ package com.example.mtctrial.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.example.mtctrial.TrialApplication
 import com.example.mtctrial.data.api.ApiClient
 import com.example.mtctrial.data.api.model.ApiResponseWrapper
 import com.example.mtctrial.data.api.model.PlayerEntity
@@ -16,8 +17,13 @@ import com.example.mtctrial.utils.unaccent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.Normalizer
+import javax.inject.Inject
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
+
+    init {
+        (application as TrialApplication).appComponent.inject(this)
+    }
 
     val originalPlayerList: MutableList<PlayerListElement> = mutableListOf()
     val originalTeamList: MutableList<TeamListElement> = mutableListOf()
@@ -30,29 +36,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         TEAMS("teams")
     }
 
-    private val apiClient: ApiClient by lazy {
-        ApiClient()
-    }
-
-    private val playerMapper: PlayerMapper by lazy {
-        PlayerMapper()
-    }
-
-    private val teamMapper: TeamMapper by lazy {
-        TeamMapper()
-    }
-
-    private val appDatabase: AppDatabase by lazy {
-        AppDatabase.getInstance(application)
-    }
-
-    private val dataRepository: DataRepository by lazy {
-        DataRepository(
-            appDatabase,
-            playerMapper,
-            teamMapper
-        )
-    }
+    @Inject lateinit var apiClient: ApiClient
+    @Inject lateinit var dataRepository: DataRepository
+    @Inject lateinit var teamMapper: TeamMapper
+    @Inject lateinit var playerMapper: PlayerMapper
 
     val networkErrorLiveData = MutableLiveData<String>()
     val requestSpinnerLiveData = MutableLiveData<Boolean>()

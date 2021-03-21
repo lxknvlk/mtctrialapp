@@ -1,8 +1,9 @@
-package com.example.mtctrial.ui.view
+package com.example.mtctrial.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.mtctrial.R
+import com.example.mtctrial.ui.view.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
