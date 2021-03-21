@@ -6,9 +6,7 @@ import com.example.mtctrial.TrialApplication
 import com.example.mtctrial.data.api.ApiClient
 import com.example.mtctrial.data.api.model.ApiResponseWrapper
 import com.example.mtctrial.data.api.model.PlayerEntity
-import com.example.mtctrial.data.api.model.SearchResponse
 import com.example.mtctrial.data.api.model.TeamEntity
-import com.example.mtctrial.data.database.AppDatabase
 import com.example.mtctrial.data.database.mapper.PlayerMapper
 import com.example.mtctrial.data.database.mapper.TeamMapper
 import com.example.mtctrial.data.database.repository.DataRepository
@@ -16,7 +14,6 @@ import com.example.mtctrial.ui.adapter.*
 import com.example.mtctrial.utils.unaccent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.Normalizer
 import javax.inject.Inject
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -41,7 +38,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     @Inject lateinit var teamMapper: TeamMapper
     @Inject lateinit var playerMapper: PlayerMapper
 
-    val networkErrorLiveData = MutableLiveData<String>()
+    val networkErrorLiveData = MutableLiveData<Exception>()
     val requestSpinnerLiveData = MutableLiveData<Boolean>()
     val morePlayersFetchedCountLiveData = MutableLiveData<Int>()
     val moreTeamsFetchedCountLiveData = MutableLiveData<Int>()
@@ -67,8 +64,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             requestSpinnerLiveData.postValue(true)
             val responseWrapper: ApiResponseWrapper = apiClient.search(searchString, searchType, offset)
 
-            if (responseWrapper.error != null){
-                networkErrorLiveData.postValue(responseWrapper.error)
+            if (responseWrapper.exception != null){
+                networkErrorLiveData.postValue(responseWrapper.exception)
                 requestSpinnerLiveData.postValue(false)
                 return@launch
             }

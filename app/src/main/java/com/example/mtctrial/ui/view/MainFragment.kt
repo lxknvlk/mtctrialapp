@@ -3,11 +3,11 @@ package com.example.mtctrial.ui.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,16 +18,21 @@ import com.example.mtctrial.ui.adapter.*
 import com.example.mtctrial.ui.viewmodel.MainViewModel
 import com.example.mtctrial.ui.viewmodelfactory.MainViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.*
 
 
 class MainFragment : Fragment() {
 
+    private var errorJustShown: Boolean = false
     private var showMorePlayersButton = false
     private var showMoreTeamsButton = false
 
-    private var timer: Timer = Timer()
-    private val DELAY: Long = 400
+    private var searchQueryTypingTimer: Timer = Timer()
+    private var errorDelayTimer: Timer = Timer()
+    private val DELAY_SEARCH_QUERY_TYPING: Long = 400
+    private val DELAY_DUPLICATE_ERROR_MESSAGES: Long = 15000
 
     companion object {
         fun newInstance() = MainFragment()
@@ -104,16 +109,16 @@ class MainFragment : Fragment() {
 
         etSearchField.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                timer = Timer()
-                timer.schedule(object : TimerTask() {
+                searchQueryTypingTimer = Timer()
+                searchQueryTypingTimer.schedule(object : TimerTask() {
                     override fun run() {
                         doSearch()
                     }
-                }, DELAY)
+                }, DELAY_SEARCH_QUERY_TYPING)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                timer.cancel()
+                searchQueryTypingTimer.cancel()
             }
         })
 
@@ -148,8 +153,30 @@ class MainFragment : Fragment() {
             updateList()
         })
 
-        viewModel.networkErrorLiveData.observe(viewLifecycleOwner, Observer { error ->
-            Toast.makeText(activity, error, Toast.LENGTH_SHORT).show()
+        viewModel.networkErrorLiveData.observe(viewLifecycleOwner, Observer { exception ->
+            Log.d("errorlog", "new error message received")
+
+            val errorMessage = when(exception){
+                is UnknownHostException -> "Cant reach server. Is the wifi turned on?"
+                is SocketTimeoutException -> "Server responding too long!"
+                else -> "Error, please try again later!"
+            }
+
+            errorDelayTimer = Timer()
+            errorDelayTimer.schedule(object : TimerTask() {
+                override fun run() {
+                    Log.d("errorlog", "resetting error message")
+                    errorJustShown = false
+                }
+
+            }, DELAY_DUPLICATE_ERROR_MESSAGES)
+
+            if (!errorJustShown) {
+                errorJustShown = true
+                Log.d("errorlog", "showing error message")
+                Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+
         })
 
         viewModel.requestSpinnerLiveData.observe(viewLifecycleOwner, Observer { requestInProcess ->

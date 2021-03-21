@@ -6,5 +6,5 @@ class ApiResponseWrapper {
     @SerializedName("result")
     var result: SearchResponse? = null
 
-    var error: String? = null
+    var exception: Exception? = null
 }

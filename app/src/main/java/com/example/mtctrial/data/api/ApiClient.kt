@@ -25,7 +25,7 @@ class ApiClient {
         } catch (e: Exception) {
             e.printStackTrace()
             val response = ApiResponseWrapper()
-            response.error = e.message
+            response.exception = e
             response
         }
     }
