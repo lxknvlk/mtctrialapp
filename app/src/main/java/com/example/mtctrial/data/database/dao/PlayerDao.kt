@@ -15,7 +15,7 @@ interface PlayerDao {
     @Query("SELECT * FROM player WHERE playerID = :playerID")
     fun findById(playerID: String): PlayerData
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(playerList: List<PlayerData>)
 
     @Delete

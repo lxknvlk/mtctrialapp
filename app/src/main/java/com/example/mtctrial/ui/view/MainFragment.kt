@@ -19,6 +19,9 @@ import kotlinx.android.synthetic.main.main_fragment.*
 
 class MainFragment : Fragment() {
 
+    private var showMorePlayersButton = false
+    private var showMoreTeamsButton = false
+
     companion object {
         fun newInstance() = MainFragment()
     }
@@ -39,6 +42,7 @@ class MainFragment : Fragment() {
             if (element is ButtonListElement){
                 when (element.type){
                     ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> {
+                        showMorePlayersButton = false
                         viewModel.searchData(
                             viewModel.currentSearchString,
                             MainViewModel.SearchType.PLAYERS,
@@ -46,6 +50,7 @@ class MainFragment : Fragment() {
                     }
 
                     ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS -> {
+                        showMoreTeamsButton = false
                         viewModel.searchData(
                             viewModel.currentSearchString,
                             MainViewModel.SearchType.TEAMS,
@@ -84,6 +89,8 @@ class MainFragment : Fragment() {
         btnSearchButton.setOnClickListener {
             val searchString: String = etSearchField.text.toString().toLowerCase()
             viewModel.currentSearchString = searchString
+            showMorePlayersButton = false
+            showMoreTeamsButton = false
             updateList()
 
             if (searchString.isEmpty()) return@setOnClickListener
@@ -118,6 +125,14 @@ class MainFragment : Fragment() {
                 ivSearchIcon.visibility = View.VISIBLE
             }
         })
+
+        viewModel.morePlayersFetchedCountLiveData.observe(viewLifecycleOwner, Observer { playersFetchedCount ->
+            showMorePlayersButton = playersFetchedCount == 10 && viewModel.currentSearchString.isNotEmpty()
+        })
+
+        viewModel.moreTeamsFetchedCountLiveData.observe(viewLifecycleOwner, Observer { teamsFetchedCount ->
+            showMoreTeamsButton = teamsFetchedCount == 10 && viewModel.currentSearchString.isNotEmpty()
+        })
     }
 
     private fun updateList() {
@@ -140,13 +155,15 @@ class MainFragment : Fragment() {
         if (filteredPlayerList.isNotEmpty()) {
             viewModel.filteredList.add(SeparatorListElement("Players (${filteredPlayerList.size})"))
             viewModel.filteredList.addAll(filteredPlayerList)
-            viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
+            if (showMorePlayersButton)
+                viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS))
         }
 
         if (filteredTeamsList.isNotEmpty()) {
             viewModel.filteredList.add(SeparatorListElement("Teams (${filteredTeamsList.size})"))
             viewModel.filteredList.addAll(filteredTeamsList)
-            viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
+            if (showMoreTeamsButton)
+                viewModel.filteredList.add(ButtonListElement(ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS))
         }
 
         if (viewModel.filteredList.isEmpty()){
@@ -154,7 +171,9 @@ class MainFragment : Fragment() {
         }
 
         if (rvList.adapter == null){
-            rvList.adapter = context?.let { RecyclerAdapter(it, listener, viewModel.filteredList.toMutableList()) }
+            rvList.adapter = context?.let {
+                RecyclerAdapter(it, listener, viewModel.filteredList.toMutableList())
+            }
         } else {
             (rvList.adapter as RecyclerAdapter).setData(viewModel.filteredList)
         }

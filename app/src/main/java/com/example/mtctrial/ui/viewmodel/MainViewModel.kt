@@ -57,6 +57,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val networkErrorLiveData = MutableLiveData<String>()
     val requestSpinnerLiveData = MutableLiveData<Boolean>()
+    val morePlayersFetchedCountLiveData = MutableLiveData<Int>()
+    val moreTeamsFetchedCountLiveData = MutableLiveData<Int>()
 
     val playerLiveData: LiveData<List<PlayerListElement>> by lazy {
         Transformations.map(dataRepository.playerLiveData) { playerEntityList ->
@@ -89,6 +91,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             val playerEntities: List<PlayerEntity>? = searchResponse.players
             val teamEntities: List<TeamEntity>? = searchResponse.teams
+
+            when (searchType) {
+                SearchType.PLAYERS -> {
+                    morePlayersFetchedCountLiveData.postValue(playerEntities?.size ?: 0)
+                }
+                SearchType.TEAMS -> {
+                    moreTeamsFetchedCountLiveData.postValue(teamEntities?.size ?: 0)
+                }
+                else -> {
+                    moreTeamsFetchedCountLiveData.postValue(teamEntities?.size ?: 0)
+                    morePlayersFetchedCountLiveData.postValue(playerEntities?.size ?: 0)
+                }
+            }
 
             dataRepository.persistData(playerEntities, teamEntities)
             requestSpinnerLiveData.postValue(false)

@@ -96,8 +96,9 @@ class RecyclerAdapter(
                 ButtonListElement.ListButtonType.BUTTON_MORE_TEAMS -> btnButton.text = "More Teams"
                 ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> btnButton.text = "More Players"
             }
-
+            btnButton.isEnabled = true
             btnButton.setOnClickListener {
+                it.isEnabled = false
                 listener.onClick(item)
             }
         }
