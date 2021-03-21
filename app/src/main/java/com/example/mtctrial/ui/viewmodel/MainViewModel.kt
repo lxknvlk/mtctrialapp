@@ -76,7 +76,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun searchData(searchString: String, searchType: SearchType?, offset: Int?) {
         viewModelScope.launch(Dispatchers.IO) {
             requestSpinnerLiveData.postValue(true)
-            val responseWrapper: ApiResponseWrapper = apiClient.search(searchString)
+            val responseWrapper: ApiResponseWrapper = apiClient.search(searchString, searchType, offset)
 
             if (responseWrapper.error != null){
                 networkErrorLiveData.postValue(responseWrapper.error)

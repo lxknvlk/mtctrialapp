@@ -37,7 +37,6 @@ class MainFragment : Fragment() {
 
     private val listener: RecyclerAdapter.Listener = object: RecyclerAdapter.Listener {
         override fun onClick(element: ListElement) {
-            Toast.makeText(activity, "More button clicked", Toast.LENGTH_SHORT).show()
             if (element is ButtonListElement){
                 when (element.type){
                     ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> {
@@ -149,13 +148,18 @@ class MainFragment : Fragment() {
 
             val isSeparatorElement = it is SeparatorListElement
             val isSearchStringEmpty = viewModel.currentSearchString.isEmpty()
+            val isButtonListElement = it is ButtonListElement
 
             when (it){
                 is PlayerListElement -> viewModel.currentPlayersList ++
                 is TeamListElement -> viewModel.currentTeamsList ++
             }
 
-            isSeparatorElement || isSearchStringEmpty || playerElementMatchesQuery || teamElementMatchesQuery
+            isButtonListElement
+                    || isSeparatorElement
+                    || isSearchStringEmpty
+                    || playerElementMatchesQuery
+                    || teamElementMatchesQuery
         }
 
         viewModel.filteredList.clear()
