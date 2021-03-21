@@ -33,6 +33,9 @@ class MainFragment : Fragment() {
 
     private val listener: RecyclerAdapter.Listener = object: RecyclerAdapter.Listener {
         override fun onClick(element: ListElement) {
+
+            if (viewModel.currentSearchString.isEmpty()) return
+            
             if (element is ButtonListElement){
                 when (element.type){
                     ButtonListElement.ListButtonType.BUTTON_MORE_PLAYERS -> {

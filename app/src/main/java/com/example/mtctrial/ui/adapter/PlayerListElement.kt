@@ -7,4 +7,8 @@ class PlayerListElement(
     var playerNationality: String = "",
     var playerAge: String = "",
     var playerClub: String = ""
-) : ListElement()
+) : ListElement() {
+    override fun toString(): String {
+        return "$playerFirstName $playerSecondName"
+    }
+}

@@ -7,4 +7,8 @@ class TeamListElement(
     var isNation: String = "",
     var teamNationality: String = "",
     var teamCity: String = ""
-) : ListElement()
+) : ListElement() {
+    override fun toString(): String {
+        return "$teamName"
+    }
+}

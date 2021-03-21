@@ -20,4 +20,8 @@ class PlayerEntity {
 
     @SerializedName("playerClub")
     var playerClub: String? = null
+
+    override fun toString(): String {
+        return "$playerFirstName $playerSecondName"
+    }
 }

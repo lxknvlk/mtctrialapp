@@ -12,8 +12,10 @@ import com.example.mtctrial.data.database.mapper.PlayerMapper
 import com.example.mtctrial.data.database.mapper.TeamMapper
 import com.example.mtctrial.data.database.repository.DataRepository
 import com.example.mtctrial.ui.adapter.*
+import com.example.mtctrial.utils.unaccent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.Normalizer
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -95,16 +97,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun filterListElement(it: ListElement): Boolean {
         val playerElementMatchesQuery = it is PlayerListElement && (
-                it.playerSecondName.toLowerCase().contains(currentSearchString)
-                        || it.playerFirstName.toLowerCase().contains(currentSearchString)
-                        || it.playerClub.toLowerCase().contains(currentSearchString)
-                        || it.playerNationality.toLowerCase().contains(currentSearchString))
+                it.playerSecondName.unaccent().contains(currentSearchString, true)
+                        || it.playerFirstName.unaccent().contains(currentSearchString, true)
+                        || it.playerClub.unaccent().contains(currentSearchString, true)
+                        || it.playerNationality.unaccent().contains(currentSearchString, true)
+                        || it.playerAge.unaccent().contains(currentSearchString, true)
+                )
 
         val teamElementMatchesQuery = it is TeamListElement && (
-                it.teamStadium.toLowerCase().contains(currentSearchString)
-                        || it.teamNationality.toLowerCase().contains(currentSearchString)
-                        || it.teamCity.toLowerCase().contains(currentSearchString)
-                        || it.teamName.toLowerCase().contains(currentSearchString))
+                it.teamCity.unaccent().contains(currentSearchString, true)
+                        || it.teamName.unaccent().contains(currentSearchString, true)
+                        || it.teamNationality.unaccent().contains(currentSearchString, true)
+                        || it.teamStadium.unaccent().contains(currentSearchString, true)
+                )
 
         val isSeparatorElement = it is SeparatorListElement
         val isSearchStringEmpty = currentSearchString.isEmpty()

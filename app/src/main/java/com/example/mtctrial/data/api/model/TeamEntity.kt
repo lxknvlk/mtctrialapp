@@ -20,4 +20,8 @@ class TeamEntity {
 
     @SerializedName("teamCity")
     var teamCity: String? = null
+
+    override fun toString(): String {
+        return "$teamName"
+    }
 }

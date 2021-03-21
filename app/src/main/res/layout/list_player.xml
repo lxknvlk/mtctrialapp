@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tvFirstName"
             android:text="FirstName"
+            android:layout_marginEnd="8dp"
             android:textColor="@color/black"
             />
 
@@ -24,7 +25,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/tvSecondName"
             android:text="SecondName"
-            android:layout_marginStart="8dp"
             android:textColor="@color/black"
             />
 

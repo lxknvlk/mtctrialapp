@@ -1,6 +1,7 @@
 package com.example.mtctrial.ui.adapter
 
 import android.content.Context
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -125,6 +126,12 @@ class RecyclerAdapter(
             tvSecondName.text = item.playerSecondName.trim()
             tvAge.text = item.playerAge.toString().trim()
             tvClub.text = item.playerClub.trim()
+
+            if (item.playerFirstName.trim().isEmpty()){
+                tvFirstName.visibility = View.GONE
+            } else {
+                tvFirstName.visibility = View.VISIBLE
+            }
         }
     }
 
