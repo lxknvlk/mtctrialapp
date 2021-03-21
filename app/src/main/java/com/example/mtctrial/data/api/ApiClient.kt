@@ -19,13 +19,14 @@ class ApiClient {
         retrofit.create(ApiInterface::class.java)
     }
 
-    suspend fun search(searchString: String): SearchResponse? {
-        val apiResponseWrapper: ApiResponseWrapper? = try {
+    suspend fun search(searchString: String): ApiResponseWrapper {
+        return try {
             apiInterface.search(searchString)
         } catch (e: Exception) {
             e.printStackTrace()
-            null
+            val response = ApiResponseWrapper()
+            response.error = "network"
+            response
         }
-        return apiResponseWrapper?.result
     }
 }

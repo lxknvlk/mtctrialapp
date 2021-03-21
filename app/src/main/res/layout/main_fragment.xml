@@ -15,10 +15,19 @@
         android:layout_height="64dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             app:tint="?attr/colorPrimary"
+            android:id="@+id/ivSearchIcon"
             android:src="@drawable/baseline_search_white_36"/>
+
+        <ProgressBar
+            android:layout_width="40dp"
+            android:visibility="gone"
+            android:indeterminate="true"
+            android:indeterminateTint="?attr/colorPrimaryVariant"
+            android:layout_height="40dp"
+            android:id="@+id/pbSpinner"/>
 
         <EditText
             android:layout_width="0dp"

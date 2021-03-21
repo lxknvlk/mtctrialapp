@@ -1,11 +1,9 @@
 package com.example.mtctrial.ui.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.mtctrial.data.api.ApiClient
+import com.example.mtctrial.data.api.model.ApiResponseWrapper
 import com.example.mtctrial.data.api.model.PlayerEntity
 import com.example.mtctrial.data.api.model.SearchResponse
 import com.example.mtctrial.data.api.model.TeamEntity
@@ -44,6 +42,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
+    val networkErrorLiveData = MutableLiveData<Boolean>()
+    val requestSpinnerLiveData = MutableLiveData<Boolean>()
+
     val playerLiveData: LiveData<List<PlayerListElement>> by lazy {
         Transformations.map(dataRepository.playerLiveData) { playerEntityList ->
             playerEntityList.map { playerEntity ->
@@ -76,12 +77,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun searchData(searchString: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val searchResponse: SearchResponse? = apiClient.search(searchString)
+            requestSpinnerLiveData.postValue(true)
+            val responseWrapper: ApiResponseWrapper = apiClient.search(searchString)
 
-            val playerEntities: List<PlayerEntity>? = searchResponse?.playerEntities
-            val teamEntities: List<TeamEntity>? = searchResponse?.teamEntities
+            if (responseWrapper.error != null && responseWrapper.error == "network"){
+                networkErrorLiveData.postValue(true)
+                requestSpinnerLiveData.postValue(false)
+                return@launch
+            }
+
+            val searchResponse = responseWrapper.result ?: return@launch
+
+            val playerEntities: List<PlayerEntity>? = searchResponse.playerEntities
+            val teamEntities: List<TeamEntity>? = searchResponse.teamEntities
 
             dataRepository.persistData(playerEntities, teamEntities)
+            requestSpinnerLiveData.postValue(false)
         }
     }
 }
